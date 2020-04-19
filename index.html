@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+	<style>
+		#game {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
+</head>
+<body>
+
+<!-- USER INTERFACES -->
+<div id="game">
+	<h3 id="name"></h3>
+	<h5>hp: <span id="hp"></span></h5>
+	<h1 id="wave"></h1>
+	<h5>score: <span id="score"></span></h5>
+</div>
+
+<!-- SCRIPTS -->
+<script type="text/javascript">
+
+var score = 0;
+var keypress;
+var keyState = {};
+var keyList = ['a', 's', 'd', 'f', 'j', 'k', 'l'];
+var keyFinisher = ';';
+var wave = [];
+var enemies = [
+	'Bat',
+	'Ant',
+	'Horse',
+	'Dragon'
+];
+var currentEnemy = {
+	name: enemies[roll(4)-1],
+	hp: 10
+};
+
+window.onload = function(){
+	newEnemy();
+	waveInit();
+	render();
+	renderScore();
+	setListeners();
+}
+
+function setListeners(){
+	window.addEventListener('keydown',function(e){
+		console.log(e.keyCode)
+		74, 75, 76, 186
+		keyState[e.keyCode || e.which] = true;
+		if (keyState[65]){
+			keypress='a';
+		}
+		if (keyState[68]){
+			keypress='d';
+		}
+		if (keyState[70]){
+			keypress='f';
+		}
+		if (keyState[83]){
+			keypress='s';
+		}
+		if (keyState[74]){
+			keypress='j';
+		}
+		if (keyState[75]){
+			keypress='k';
+		}
+		if (keyState[76]){
+			keypress='l';
+		}
+		if (keyState[186]){
+			keypress=';';
+		}
+		if(keypress==wave[0]){
+			console.log('true');
+			console.log(wave.length)
+			hit();
+			if(wave.length==0){
+				// Done
+				waveInit();
+			}
+			render();
+		}else{
+			console.log('false', wave[0]);
+			render();
+		}
+	},true);
+	window.addEventListener('keyup',function(e){
+		keyState[e.keyCode || e.which] = false;
+	},true);
+}
+
+function hit(){
+	currentEnemy.hp--;
+	if(currentEnemy.hp === 0){
+		newEnemy();
+	}
+	console.log(currentEnemy);
+	wave.shift();
+}
+
+function newEnemy(){
+	score++;
+	renderScore();
+	currentEnemy.name = Math.random();
+	currentEnemy.hp = 10;
+	renderEnemy();
+}
+
+function waveInit(){
+	for(i=0;i<10;i++){
+		var x = roll(keyList.length);
+		wave.push(keyList[x-1]);
+	}
+	wave.push(keyFinisher);
+	console.log(wave)
+}
+
+function render(){
+	document.getElementById('wave').innerHTML = wave.join(' ');
+	document.getElementById('hp').innerHTML = currentEnemy.hp;
+}
+
+function renderEnemy(){
+	currentEnemy.name = enemies[roll(4)-1];
+	document.getElementById('name').innerHTML = currentEnemy.name;
+}
+
+function renderScore(){
+	document.getElementById('score').innerHTML = score;
+}
+
+function roll(d){
+	return Math.floor(Math.random() * d) + 1;
+}
+
+</script>
+</body>
+</html>
